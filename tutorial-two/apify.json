@@ -1,0 +1,13 @@
+{
+	"name": "tutorial-two",
+	"version": "0.1",
+	"buildTag": "latest",
+	"env": {
+		"APIFY_USER_ID": "@myUserId",
+		"APIFY_LOG_LEVEL":"DEBUG",
+		"APIFY_TOKEN": "@myAPIToken",
+		"APIFY_PROXY_PASSWORD": "@myProxyPassword",
+		"APIFY_LOCAL_STORAGE_DIR":"./apify_storage"
+	},
+	"template": "project_cheerio_crawler"
+}

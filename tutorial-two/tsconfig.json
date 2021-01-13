@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2018",
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "lib": [
+        "es2018",
+        "es2018.asynciterable",
+        "dom",
+        "dom.iterable"
+    ],
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "rootDir": "src/",
+    "outDir": "build/"
+  },
+  "include": [
+    "src/"
+  ]
+}
