@@ -43,7 +43,8 @@ export const sendEmail = async (): Promise<void> => {
 
     const dataset: Dataset = await Apify.openDataset(ENVKEY.DATASET, { forceCloud: true });
     const datasetUrl: string = `https://api.apify.com/v2/datasets/${dataset.datasetId}/items`;
-    const message: string = `I have completed second tutorial exercise and this is my <a href='${datasetUrl}'>DATASET LINK</>`;
+    const message: string = `I have completed second tutorial exercise and this is my <a href='${datasetUrl}'>DATASET LINK</a><br><br>
+    Please also check my <a href='https://github.com/sohebcakewalk/apify_tutorials/tree/main/tutorial-two'>Github URL</a> for Quiz Q&A and source code.`;
     const objEmail: Email = {
         to: "lukas@apify.com",
         subject: "SOHEB: This is for the Apify SDK exercise (Tutorial II)",
