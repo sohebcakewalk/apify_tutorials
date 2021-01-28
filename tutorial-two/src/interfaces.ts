@@ -30,7 +30,10 @@ export interface Email {
     html?: string;
 }
 
-export enum ENVKEY {
-    QUEUENAME = "AmazonList",
-    DATASET = "AmazonDataSet"
+export enum EVENT_TYPES {
+    CREATED = "ACTOR.RUN.CREATED",
+    SUCCEEDED = "ACTOR.RUN.SUCCEEDED",
+    FAILED = "ACTOR.RUN.FAILED",
+    ABORTED = "ACTOR.RUN.ABORTED",
+    TIMEDOUT = "ACTOR.RUN.TIMED_OUT",
 }

@@ -1,20 +1,19 @@
 import Apify from 'apify';
 import { PuppeteerHandlePageInputs, PuppeteerCrawler, RequestQueue } from 'apify';
-import { ENVKEY } from './interfaces';
 import * as tools from './tools';
-import { sendEmail } from './tools';
+import { addWebhookToTutorialThree, sendEmail } from './tools';
 const {
     utils: { log },
 } = Apify;
 
 Apify.main(async (): Promise<void> => {
     log.info("Starting actor.");
-    const requestQueue: RequestQueue = await Apify.openRequestQueue(ENVKEY.QUEUENAME);
+    const requestQueue: RequestQueue = await Apify.openRequestQueue();
     await requestQueue.addRequest(await tools.getSearchSource());
 
     const proxyConfiguration = await tools.setProxy();
 
-    const router = tools.createRouter(requestQueue)
+    const router = tools.createRouter(requestQueue);
 
     const handlePageFunction = async (context: PuppeteerHandlePageInputs): Promise<void> => {
         const { request } = context;
@@ -34,5 +33,10 @@ Apify.main(async (): Promise<void> => {
     log.info("Starting the crawl.");
     await crawler.run();
     log.info("Actor finished.");
+
+    // Send Email
     await sendEmail();
+
+    // Created from Apify Tutorial Three
+    await addWebhookToTutorialThree();
 });

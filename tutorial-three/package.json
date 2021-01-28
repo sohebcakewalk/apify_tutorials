@@ -1,5 +1,5 @@
 {
-	"name": "tutorial-two",
+	"name": "tutorial-three",
 	"version": "0.0.1",
 	"description": "This is a boilerplate of an Apify actor.",
 	"dependencies": {
@@ -11,7 +11,7 @@
 		"eslint": "^7.17.0"
 	},
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc -p tsconfig.json",
 		"apify-p": "tsc && apify push",
 		"start": "tsc && node build/main.js",
 		"lint": "./node_modules/.bin/eslint ./build --ext .js,.jsx",
