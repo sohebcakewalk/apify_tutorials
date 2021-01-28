@@ -21,7 +21,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productOffer = exports.productDetail = exports.productList = void 0;
 const Apify = __importStar(require("apify"));
-const interfaces_1 = require("./interfaces");
 const tools_1 = require("./tools");
 /**
 * This method will check for the product ASIN from amazon product listing page and based on product ASIN, add request queue for product detail.
@@ -105,7 +104,7 @@ exports.productOffer = async ({ request, page }) => {
         }
         return arrProductDetail;
     }, request);
-    const dataset = await Apify.openDataset(interfaces_1.ENVKEY.DATASET, { forceCloud: true });
+    const dataset = await Apify.openDataset();
     await dataset.pushData(arrAmazonData);
 };
 //# sourceMappingURL=routes.js.map

@@ -1,6 +1,6 @@
 import * as Apify from "apify";
-import { PuppeteerHandlePageInputs, RequestQueue, Request, Dataset } from "apify";
-import { ENVKEY, ProductDetails, Url, UserData } from "./interfaces";
+import { PuppeteerHandlePageInputs, RequestQueue, Request } from "apify";
+import { ProductDetails, Url } from "./interfaces";
 import { cleanHtmlString, uniqueKey } from "./tools";
 
 /**
@@ -86,6 +86,7 @@ export const productOffer = async ({ request, page }: PuppeteerHandlePageInputs)
         }
         return arrProductDetail;
     }, request);
-    const dataset: Dataset = await Apify.openDataset(ENVKEY.DATASET, { forceCloud: true });
+
+    const dataset = await Apify.openDataset();
     await dataset.pushData(arrAmazonData);
 };

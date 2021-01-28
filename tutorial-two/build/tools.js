@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendEmail = exports.createRouter = exports.getSearchSource = exports.setProxy = exports.cleanHtmlString = exports.uniqueKey = void 0;
+exports.addWebhookToTutorialThree = exports.sendEmail = exports.createRouter = exports.getSearchSource = exports.setProxy = exports.cleanHtmlString = exports.uniqueKey = void 0;
 const Apify = __importStar(require("apify"));
 const interfaces_1 = require("./interfaces");
 const routes = __importStar(require("./routes"));
@@ -56,7 +56,7 @@ exports.createRouter = (requestQueue) => {
 };
 exports.sendEmail = async () => {
     log.info("Sending Email...");
-    const dataset = await Apify.openDataset(interfaces_1.ENVKEY.DATASET, { forceCloud: true });
+    const dataset = await Apify.openDataset();
     const datasetUrl = `https://api.apify.com/v2/datasets/${dataset.datasetId}/items`;
     const message = `I have completed second tutorial exercise and this is my <a href='${datasetUrl}'>DATASET LINK</a><br><br>
     Please also check my <a href='https://github.com/sohebcakewalk/apify_tutorials/tree/main/tutorial-two'>Github URL</a> for Quiz Q&A and source code.`;
@@ -67,5 +67,25 @@ exports.sendEmail = async () => {
     };
     await Apify.call("apify/send-mail", objEmail);
     log.info("Email Sent");
+};
+exports.addWebhookToTutorialThree = async () => {
+    // Used named dataset, but later update it default dataset;
+    //const dataset: Dataset = await Apify.openDataset(ENVKEY.DATASET, { forceCloud: true });
+    const dataset = await Apify.openDataset();
+    const payloadTemplate = `{
+        "userId": {{userId}},
+        "createdAt": {{createdAt}},
+        "eventType": {{eventType}},
+        "eventData": {{eventData}},
+        "resource": {{resource}},
+        "datasetId":"${dataset.datasetId}"
+    }`;
+    await Apify.addWebhook({
+        eventTypes: [interfaces_1.EVENT_TYPES.SUCCEEDED],
+        requestUrl: "https://api.apify.com/v2/acts/sohebrapati~tutorial-three/runs?token=JCyt3zC9F3zsigH9xHC6QtQYj",
+        payloadTemplate: payloadTemplate,
+        idempotencyKey: process.env.APIFY_ACTOR_RUN_ID
+    });
+    log.info('Webhook for TutorialThree added successfully!');
 };
 //# sourceMappingURL=tools.js.map

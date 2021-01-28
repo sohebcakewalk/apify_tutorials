@@ -24,33 +24,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const apify_1 = __importDefault(require("apify"));
 const tools = __importStar(require("./tools"));
-const tools_1 = require("./tools");
 const { utils: { log }, } = apify_1.default;
 apify_1.default.main(async () => {
-    log.info("Starting actor.");
-    const requestQueue = await apify_1.default.openRequestQueue();
-    await requestQueue.addRequest(await tools.getSearchSource());
-    const proxyConfiguration = await tools.setProxy();
-    const router = tools.createRouter(requestQueue);
-    const handlePageFunction = async (context) => {
-        const { request } = context;
-        log.info(`Processing ${request.url}`);
-        await router(request.userData.label, context);
-    };
-    log.debug("Setting up crawler.");
-    const crawler = new apify_1.default.PuppeteerCrawler({
-        requestQueue,
-        proxyConfiguration,
-        handlePageFunction,
-        maxRequestRetries: 3,
-        gotoTimeoutSecs: 120
-    });
-    log.info("Starting the crawl.");
-    await crawler.run();
-    log.info("Actor finished.");
-    // Send Email
-    await tools_1.sendEmail();
-    // Created from Apify Tutorial Three
-    await tools_1.addWebhookToTutorialThree();
+    log.info("Starting actor (tutorial-three).");
+    await tools.processCheapestOffer();
 });
 //# sourceMappingURL=main.js.map
