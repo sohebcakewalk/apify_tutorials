@@ -39,6 +39,12 @@ export const createRouter = (requestQueue: RequestQueue) => {
 };
 
 export const sendEmail = async (): Promise<void> => {
+    const input: any = await Apify.getInput();
+    let toEmail: string = "lukas@apify.com";
+    if (input.isEmail && input.isEmail.trim() !== "") {
+        toEmail = input.isEmail;
+    }
+
     log.info("Sending Email...");
 
     const dataset: Dataset = await Apify.openDataset();
@@ -46,7 +52,7 @@ export const sendEmail = async (): Promise<void> => {
     const message: string = `I have completed second tutorial exercise and this is my <a href='${datasetUrl}'>DATASET LINK</a><br><br>
     Please also check my <a href='https://github.com/sohebcakewalk/apify_tutorials/tree/main/tutorial-two'>Github URL</a> for Quiz Q&A and source code.`;
     const objEmail: Email = {
-        to: "lukas@apify.com",
+        to: toEmail,
         subject: "SOHEB: This is for the Apify SDK exercise (Tutorial II)",
         html: message
     };
