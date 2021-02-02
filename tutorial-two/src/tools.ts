@@ -41,8 +41,8 @@ export const createRouter = (requestQueue: RequestQueue) => {
 export const sendEmail = async (): Promise<void> => {
     const input: any = await Apify.getInput();
     let toEmail: string = "lukas@apify.com";
-    if (input.isEmail && input.isEmail.trim() !== "") {
-        toEmail = input.isEmail;
+    if (input.toEmail && input.toEmail.trim() !== "") {
+        toEmail = input.toEmail;
     }
 
     log.info("Sending Email...");
