@@ -78,7 +78,7 @@ export const addWebhookToTutorialThree = async (): Promise<void> => {
 
     await Apify.addWebhook({
         eventTypes: [EVENT_TYPES.SUCCEEDED],
-        requestUrl: "https://api.apify.com/v2/acts/sohebrapati~tutorial-three/runs?token=JCyt3zC9F3zsigH9xHC6QtQYj",
+        requestUrl: `https://api.apify.com/v2/acts/sohebrapati~tutorial-three/runs?token=${process.env.APIFY_TOKEN}`,
         payloadTemplate: payloadTemplate,
         idempotencyKey: process.env.APIFY_ACTOR_RUN_ID
     });
