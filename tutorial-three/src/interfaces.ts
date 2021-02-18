@@ -15,6 +15,5 @@ export interface ProductDetailsFilterByUrl {
 
 export interface productDetailWithPrice {
     price: number;
-    //shippingPrice: number;
     productDetails: ProductDetails;
 }
