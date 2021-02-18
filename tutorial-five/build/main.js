@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -30,7 +30,6 @@ const { utils: { log }, } = apify_1.default;
 apify_1.default.main(async () => {
     log.info("Starting actor.");
     const input = await tools.getInput();
-    console.log(input);
     if (input.useClient) {
         log.info("Starting task with apify-client");
         await apifyClient_1.callTaskWithClient("sohebrapati~tutorial-five-task", input.memory, input.fields, input.maxItems, input.format = "csv");

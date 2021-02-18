@@ -8,24 +8,21 @@ const apify_1 = __importDefault(require("apify"));
 const got_1 = __importDefault(require("got"));
 const tools_1 = require("./tools");
 const { utils: { log }, } = apify_1.default;
-const callTaskWithApi = async (taskId, memory, fields, limit, format) => {
-    // const apiUrl = `https://api.apify.com/v2/actor-tasks/${taskId}/runs?token=${process.env.APIFY_TOKEN}&memory=${memory}`;
-    // const response: any = await got({
-    //     url: apiUrl,
-    //     method: 'POST',
-    //     json: actorInput(),
-    //     responseType: 'json',
-    // });
-    // const objTaskRun = response.body.data;
-    // const runTaskData = await getRunTaskData(objTaskRun.id);
-    // if (runTaskData.status === "SUCCEEDED") {
-    //     const data = await getDataFromStore(runTaskData.defaultDatasetId, fields.join(','), limit, format);
-    //     await saveToKeyValueStore(data);
-    // }
-    const data = await getDataFromStore("kEbc4d0NebYCLOUaK", fields.join(','), limit, format);
-    await tools_1.saveToKeyValueStore(data);
+exports.callTaskWithApi = async (taskId, memory, fields, limit, format) => {
+    const apiUrl = `https://api.apify.com/v2/actor-tasks/${taskId}/runs?token=${process.env.APIFY_TOKEN}&memory=${memory}`;
+    const response = await got_1.default({
+        url: apiUrl,
+        method: 'POST',
+        json: tools_1.actorInput(),
+        responseType: 'json',
+    });
+    const objTaskRun = response.body.data;
+    const runTaskData = await getRunTaskData(objTaskRun.id);
+    if (runTaskData.status === "SUCCEEDED") {
+        const data = await getDataFromStore(runTaskData.defaultDatasetId, fields.join(','), limit, format);
+        await tools_1.saveToKeyValueStore(data);
+    }
 };
-exports.callTaskWithApi = callTaskWithApi;
 const getRunTaskData = async (actorRunId) => {
     return new Promise((resolve, reject) => {
         const intervalStatusCheck = setInterval(async () => {

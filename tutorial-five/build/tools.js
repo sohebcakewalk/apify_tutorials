@@ -14,25 +14,21 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.actorInput = exports.saveToKeyValueStore = exports.getInput = void 0;
 const Apify = __importStar(require("apify"));
-const getInput = async () => {
+exports.getInput = async () => {
     const input = (await Apify.getInput());
     return input;
 };
-exports.getInput = getInput;
-const saveToKeyValueStore = async (data) => {
-    const kvStore = await Apify.openKeyValueStore("tutorial-v-store");
-    await kvStore.setValue('OUTPUT', data, { contentType: "text/csv" });
+exports.saveToKeyValueStore = async (data) => {
+    await Apify.setValue('OUTPUT', data, { contentType: "text/csv" });
 };
-exports.saveToKeyValueStore = saveToKeyValueStore;
-const actorInput = () => {
-    return { keyword: 'phone', toEmail: 'soheb@cakewalk.in' };
+exports.actorInput = () => {
+    return { keyword: 'phone' };
 };
-exports.actorInput = actorInput;
 //# sourceMappingURL=tools.js.map

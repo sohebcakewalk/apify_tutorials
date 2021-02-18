@@ -7,8 +7,7 @@ export const getInput = async (): Promise<InputFields> => {
 };
 
 export const saveToKeyValueStore = async (data: any): Promise<void> => {
-    const kvStore = await Apify.openKeyValueStore("tutorial-v-store");
-    await kvStore.setValue('OUTPUT', data, { contentType: "text/csv" });
+    await Apify.setValue('OUTPUT', data, { contentType: "text/csv" });
 }
 
 export const actorInput = (): any => {
