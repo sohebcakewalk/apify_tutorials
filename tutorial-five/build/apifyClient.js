@@ -11,18 +11,15 @@ const { utils: { log }, } = apify_1.default;
 const apifyClient = new apify_client_1.default({
     token: process.env.APIFY_TOKEN,
 });
-const callTaskWithClient = async (taskId, memory, fields, limit, format) => {
-    // const taskClient = apifyClient.task(taskId);
-    // const objTaskRun = await taskClient.start(actorInput(), { memory: memory });
-    // const runTaskData = await getRunTaskData(objTaskRun.id);
-    // if (runTaskData.status === "SUCCEEDED") {
-    //     const data = await getDataFromStore(runTaskData.defaultDatasetId, fields.join(','), limit, format);
-    //     await saveToKeyValueStore(data);
-    // }
-    const data = await getDataFromStore("WDGC8jzM4rXX7wmOr", fields, limit, format);
-    await tools_1.saveToKeyValueStore(data);
+exports.callTaskWithClient = async (taskId, memory, fields, limit, format) => {
+    const taskClient = apifyClient.task(taskId);
+    const objTaskRun = await taskClient.start(tools_1.actorInput(), { memory: memory });
+    const runTaskData = await getRunTaskData(objTaskRun.id);
+    if (runTaskData.status === "SUCCEEDED") {
+        const data = await getDataFromStore(runTaskData.defaultDatasetId, fields, limit, format);
+        await tools_1.saveToKeyValueStore(data);
+    }
 };
-exports.callTaskWithClient = callTaskWithClient;
 const getRunTaskData = async (actorRunId) => {
     const runClient = await apifyClient.run(actorRunId);
     return new Promise((resolve, reject) => {
@@ -35,7 +32,7 @@ const getRunTaskData = async (actorRunId) => {
                 }
             }
             catch (error) {
-                log.error("Error occured in actor-runs api.", error);
+                log.error("Error occured in actor run client.", error);
                 clearInterval(intervalStatusCheck);
                 reject(error);
             }
