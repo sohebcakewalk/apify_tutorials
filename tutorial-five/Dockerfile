@@ -26,7 +26,7 @@ RUN echo "Node.js version:" && node --version \
 # Since we do this after NPM install, quick build will be really fast
 # for simple source file changes.
 # COPY . ./
-COPY --chown=myuser:myuser . ./
+COPY . ./
 
 # Optionally, specify how to launch the source code of your actor.
 # By default, Apify's base Docker images define the CMD instruction
