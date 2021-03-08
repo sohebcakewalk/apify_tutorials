@@ -14,7 +14,8 @@ export const cleanHtmlString = (str: string): string => {
 
 export const setProxy = async (): Promise<ProxyConfiguration> => {
     return await Apify.createProxyConfiguration({
-        groups: ["BUYPROXIES94952", "StaticUS3"]
+        //groups: ["BUYPROXIES94952", "StaticUS3"] // Commented as per tutorial six exercise instruction
+        groups: ["BUYPROXIES94952"]        
     });
 };
 
@@ -25,7 +26,7 @@ export const getSearchSource = async (): Promise<Url> => {
         userData: {
             label: "productList",
             keyword: input.keyword
-        },
+        }
     };
 };
 
