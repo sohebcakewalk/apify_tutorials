@@ -6,7 +6,7 @@ import { cleanHtmlString, uniqueKey } from "./tools";
 /**
 * This method will check for the product ASIN from amazon product listing page and based on product ASIN, add request queue for product detail.
 */
-export const productList = async ({ request, page }: PuppeteerHandlePageInputs, requestQueue: RequestQueue): Promise<void> => {
+export const productList = async ({ request, page }: PuppeteerHandlePageInputs, requestQueue: RequestQueue, dataASINs: any): Promise<void> => {
     const { userData: { keyword } } = request;
     const arrAsin = await page.$$eval(".s-asin", async ($posts: Element[]) => {
         const arrAsin: string[] = [];
@@ -20,6 +20,7 @@ export const productList = async ({ request, page }: PuppeteerHandlePageInputs, 
     });
 
     for (let i = 0; i < arrAsin.length; i++) {
+        dataASINs[arrAsin[i]] = 0;
         const objRequest: Url = <Url>{
             url: `https://www.amazon.com/dp/${arrAsin[i]}`,
             userData: {
@@ -62,7 +63,8 @@ export const productDetail = async ({ request, page }: PuppeteerHandlePageInputs
 /**
 * This method will fetch price, shiping price (if any) and seller name. And create product detail da which contains title, description, keyword, url, price, shippingPrice and sellerName push to apify cloud dataset.
 */
-export const productOffer = async ({ request, page }: PuppeteerHandlePageInputs): Promise<void> => {
+export const productOffer = async ({ request, page }: PuppeteerHandlePageInputs, requestQueue: RequestQueue, dataASINs: any): Promise<void> => {
+    const { userData: { asin } } = request;
     const arrAmazonData: ProductDetails[] = await page.$$eval("div.olpOffer", ($posts: Element[], request: Request) => {
         const { userData: { keyword, title, desc, productUrl } } = request;
         const arrProductDetail: ProductDetails[] = [];
@@ -87,6 +89,9 @@ export const productOffer = async ({ request, page }: PuppeteerHandlePageInputs)
         return arrProductDetail;
     }, request);
 
+    if (asin) {
+        dataASINs[asin] = arrAmazonData.length;
+    }
     const dataset = await Apify.openDataset();
     await dataset.pushData(arrAmazonData);
 };

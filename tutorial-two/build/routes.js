@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -25,7 +25,7 @@ const tools_1 = require("./tools");
 /**
 * This method will check for the product ASIN from amazon product listing page and based on product ASIN, add request queue for product detail.
 */
-exports.productList = async ({ request, page }, requestQueue) => {
+const productList = async ({ request, page }, requestQueue, dataASINs) => {
     const { userData: { keyword } } = request;
     const arrAsin = await page.$$eval(".s-asin", async ($posts) => {
         const arrAsin = [];
@@ -38,6 +38,7 @@ exports.productList = async ({ request, page }, requestQueue) => {
         return arrAsin;
     });
     for (let i = 0; i < arrAsin.length; i++) {
+        dataASINs[arrAsin[i]] = 0;
         const objRequest = {
             url: `https://www.amazon.com/dp/${arrAsin[i]}`,
             userData: {
@@ -48,10 +49,11 @@ exports.productList = async ({ request, page }, requestQueue) => {
         await requestQueue.addRequest(objRequest);
     }
 };
+exports.productList = productList;
 /**
 * This method will fetch the title, productUrl and product description from the product detail page. After fetching all these details it will add request queue for product offer.
 */
-exports.productDetail = async ({ request, page }, requestQueue) => {
+const productDetail = async ({ request, page }, requestQueue) => {
     const title = await page.title();
     if (title != "") {
         const productUrl = await page.evaluate(() => {
@@ -76,10 +78,12 @@ exports.productDetail = async ({ request, page }, requestQueue) => {
         }
     }
 };
+exports.productDetail = productDetail;
 /**
 * This method will fetch price, shiping price (if any) and seller name. And create product detail da which contains title, description, keyword, url, price, shippingPrice and sellerName push to apify cloud dataset.
 */
-exports.productOffer = async ({ request, page }) => {
+const productOffer = async ({ request, page }, requestQueue, dataASINs) => {
+    const { userData: { asin } } = request;
     const arrAmazonData = await page.$$eval("div.olpOffer", ($posts, request) => {
         const { userData: { keyword, title, desc, productUrl } } = request;
         const arrProductDetail = [];
@@ -104,7 +108,9 @@ exports.productOffer = async ({ request, page }) => {
         }
         return arrProductDetail;
     }, request);
+    dataASINs[asin] = arrAmazonData.length;
     const dataset = await Apify.openDataset();
     await dataset.pushData(arrAmazonData);
 };
+exports.productOffer = productOffer;
 //# sourceMappingURL=routes.js.map

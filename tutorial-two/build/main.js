@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -31,19 +31,53 @@ apify_1.default.main(async () => {
     const requestQueue = await apify_1.default.openRequestQueue();
     await requestQueue.addRequest(await tools.getSearchSource());
     const proxyConfiguration = await tools.setProxy();
-    const router = tools.createRouter(requestQueue);
+    const dataASINs = (await apify_1.default.getValue('dataASINs')) || {};
+    const router = tools.createRouter(requestQueue, dataASINs);
+    tools.addMigrationEvent(dataASINs);
+    tools.logASINs(dataASINs);
     const handlePageFunction = async (context) => {
-        const { request } = context;
-        log.info(`Processing ${request.url}`);
-        await router(request.userData.label, context);
+        const { request, session, puppeteerPool, page } = context;
+        try {
+            const title = await page.title();
+            if (page.url().includes('sorry') || title.includes('sorry')) {
+                await puppeteerPool.retire(page.browser());
+                throw new Error(`Request blocked or we got captcha for ${request.url}`);
+            }
+            log.info(`Processing ${request.url}`);
+            await router(request.userData.label, context);
+        }
+        catch (error) {
+            log.info(`Error occured in handlePageFunction for ${request.url}`, error);
+            session.retire();
+        }
     };
-    log.debug("Setting up crawler.");
+    log.info("Setting up crawler.");
     const crawler = new apify_1.default.PuppeteerCrawler({
         requestQueue,
         proxyConfiguration,
+        useSessionPool: true,
+        sessionPoolOptions: {
+            maxPoolSize: 1,
+            sessionOptions: {
+                maxUsageCount: 5,
+                sessionPool: undefined
+            },
+        },
+        persistCookiesPerSession: true,
+        maxConcurrency: 1,
+        gotoFunction: async ({ request, page, puppeteerPool }) => {
+            const response = page.goto(request.url).catch(() => null);
+            if (!response) {
+                await puppeteerPool.retire(page.browser());
+                throw new Error(`Page didn't load for ${request.url}`);
+            }
+            return response;
+        },
         handlePageFunction,
-        maxRequestRetries: 3,
-        gotoTimeoutSecs: 120
+        handleFailedRequestFunction: async ({ request, error }) => {
+            log.info(`Error occured for ${request.url}`, error);
+        },
+        maxRequestRetries: 2
     });
     log.info("Starting the crawl.");
     await crawler.run();
