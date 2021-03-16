@@ -14,7 +14,7 @@ export const cleanHtmlString = (str: string): string => {
 
 export const setProxy = async (): Promise<ProxyConfiguration> => {
     return await Apify.createProxyConfiguration({
-        //groups: ["BUYPROXIES94952", "StaticUS3"] // Commented as per tutorial six exercise instruction
+        //groups: ["BUYPROXIES94952", "StaticUS3"] // Commented as per tutorial six exercise instruction to use only proxy group `BUYPROXIES94952`
         groups: ["BUYPROXIES94952"]
     });
 };
