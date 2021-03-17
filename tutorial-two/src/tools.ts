@@ -14,8 +14,8 @@ export const cleanHtmlString = (str: string): string => {
 
 export const setProxy = async (): Promise<ProxyConfiguration> => {
     return await Apify.createProxyConfiguration({
-        //groups: ["BUYPROXIES94952", "StaticUS3"] // Commented as per tutorial six exercise instruction
-        groups: ["BUYPROXIES94952"]        
+        //groups: ["BUYPROXIES94952", "StaticUS3"] // Commented as per tutorial six exercise instruction to use only proxy group `BUYPROXIES94952`
+        groups: ["BUYPROXIES94952"]
     });
 };
 
@@ -30,12 +30,12 @@ export const getSearchSource = async (): Promise<Url> => {
     };
 };
 
-export const createRouter = (requestQueue: RequestQueue) => {
+export const createRouter = (requestQueue: RequestQueue, dataASINs: any) => {
     return async (routeName: string, requestContext?: PuppeteerHandlePageInputs): Promise<any> => {
         const route = routes[routeName];
         if (!route) throw new Error(`No route for name: ${routeName}`);
         log.debug(`Invoking route: ${routeName}`);
-        return route(requestContext, requestQueue);
+        return route(requestContext, requestQueue, dataASINs);
     };
 };
 
@@ -85,4 +85,20 @@ export const addWebhookToTutorialThree = async (): Promise<void> => {
     });
 
     log.info('Webhook for TutorialThree added successfully!');
+}
+
+// Add persistState event to Persist data - Tutorial Seven
+export const addMigrationEvent = (dataASINs: any): void => {
+    Apify.events.on('persistState', async () => {
+        log.info("Persisting data started!")
+        await Apify.setValue('dataASINs', dataASINs);
+        log.info("Persisting data completed!")
+    });
+}
+
+// Log ASINs object every 20 seconds - Tutorial Seven
+export const logASINs = async (dataASINs: any) => {
+    setInterval(() => {
+        log.info("ASINs object - ", dataASINs)
+    }, 20000);
 }

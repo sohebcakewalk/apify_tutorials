@@ -13,7 +13,12 @@ Apify.main(async (): Promise<void> => {
 
     const proxyConfiguration = await tools.setProxy();
 
-    const router = tools.createRouter(requestQueue);
+    const dataASINs = (await Apify.getValue('dataASINs')) || {};
+
+    const router = tools.createRouter(requestQueue, dataASINs);
+
+    tools.addMigrationEvent(dataASINs);
+    tools.logASINs(dataASINs);
 
     const handlePageFunction = async (context: PuppeteerHandlePageInputs): Promise<void> => {
         const { request, session, puppeteerPool, page } = context;
@@ -27,7 +32,6 @@ Apify.main(async (): Promise<void> => {
 
             log.info(`Processing ${request.url}`);
             await router(request.userData.label, context);
-
         } catch (error) {
             log.info(`Error occured in handlePageFunction for ${request.url}`, error);
             session.retire();
